@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Days Between Dates Calculator — Asif SaaS Studio</title>
+<style>
+  :root{
+    --emerald:#103E32; --emerald-deep:#0B352A; --lime:#DCF5B5; --paper:#F7F8F2;
+    --gold:#C9A227; --ink:#1E2A24; --muted:#5C6B62; --line:#D9E2D2; --error:#B3261E;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Segoe UI", system-ui, -apple-system, Arial, sans-serif; background:var(--paper); color:var(--ink); line-height:1.5; font-size:15.5px;}
+  .wrap{max-width:1060px; margin:0 auto; padding:20px 16px 44px;}
+  header{display:flex; align-items:center; gap:14px; background:var(--emerald); border-radius:14px; padding:16px 20px; color:var(--paper);}
+  .mono{flex:0 0 auto; width:52px; height:52px; border:2px solid var(--gold); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:Georgia, serif; font-size:30px; color:var(--gold);}
+  header h1{font-family:Georgia, serif; font-size:26px; font-weight:700;}
+  header p{font-size:12.5px; color:var(--lime); letter-spacing:1.6px; text-transform:uppercase;}
+  .intro{margin:14px 2px 2px; font-size:15px;}
+  .layout{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; align-items:start;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:16px; box-shadow:0 2px 10px rgba(16,62,50,.06);}
+  .card h2{font-family:Georgia, serif; font-size:18px; color:var(--emerald); margin-bottom:10px;}
+  label{display:block; font-size:13px; font-weight:700; color:var(--emerald); margin:10px 0 5px;}
+  label:first-of-type{margin-top:0;}
+  input[type=date], input[type=number], input[type=text], textarea, select{width:100%; font-size:15.5px; padding:9px 11px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font-family:inherit;}
+  input:focus, textarea:focus{outline:3px solid var(--lime); border-color:var(--emerald);}
+  textarea{min-height:120px; resize:vertical;}
+  .btn{border-radius:10px; padding:9px 15px; font-size:14.5px; font-weight:700; cursor:pointer; border:1.5px solid var(--emerald); background:#fff; color:var(--emerald);}
+  .btn:hover{background:var(--lime);}
+  .btn.primary{background:var(--emerald); color:var(--lime);}
+  .btn.primary:hover{background:var(--emerald-deep);}
+  .btn.small{padding:6px 11px; font-size:13.5px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .check{display:flex; align-items:center; gap:9px; font-size:14.5px; font-weight:600; margin:10px 0 2px;}
+  .check input{width:18px; height:18px; accent-color:var(--emerald);}
+  .err{display:none; margin-top:8px; color:var(--error); font-size:14px; font-weight:600;}
+  .stat{font-size:14px; color:var(--muted); margin-top:8px;}
+  .stat b{color:var(--emerald);}
+  .bigNum{font-family:Georgia, serif; font-size:44px; font-weight:700; color:var(--emerald); line-height:1.1;}
+  .bigLabel{font-size:14px; color:var(--muted);}
+  table.data{width:100%; border-collapse:collapse; font-size:14.5px; margin-top:10px;}
+  table.data td{padding:6px 8px; border-bottom:1px solid var(--line);}
+  table.data td:last-child{text-align:right; font-weight:700; color:var(--emerald); font-variant-numeric:tabular-nums;}
+  table.batch{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:10px;}
+  table.batch th{text-align:left; color:var(--emerald); font-size:12px; padding:4px 6px; border-bottom:1.5px solid var(--line);}
+  table.batch td{padding:4px 6px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.batch td.n{text-align:right; font-weight:700; color:var(--emerald);}
+  .note{font-size:13px; color:var(--muted); margin-top:10px; border-top:1px solid var(--line); padding-top:10px;}
+  footer{margin-top:8px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:12px;}
+  @media (max-width:880px){
+    .layout{grid-template-columns:1fr;}
+    header h1{font-size:22px;}
+    .bigNum{font-size:36px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mono">A</div>
+    <div>
+      <h1>Days Between Dates Calculator</h1>
+      <p>Asif SaaS Studio</p>
+    </div>
+  </header>
+
+  <p class="intro">Count the exact days between two dates — with calendar breakdowns, business days, and a batch mode that reads dates from pasted or uploaded text. All maths is done with true calendar arithmetic (leap years included), entirely in your browser.</p>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h2>1 · Two dates</h2>
+        <label for="startDate">Start date</label>
+        <input type="date" id="startDate">
+        <label for="endDate">End date</label>
+        <input type="date" id="endDate">
+        <label class="check"><input type="checkbox" id="inclEnd"> Include the end date in the count (+1 day)</label>
+        <div class="btnrow">
+          <button class="btn small" id="todayBtn" type="button">End = today</button>
+          <button class="btn small" id="swapBtn" type="button">Swap dates</button>
+          <button class="btn small" id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="err" id="dateErr"></div>
+        <div id="resultBox" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>2 · Add or subtract days</h2>
+        <label for="baseDate">Starting date</label>
+        <input type="date" id="baseDate">
+        <label for="dayCount">Number of days</label>
+        <input type="number" id="dayCount" value="30" step="1">
+        <div class="btnrow">
+          <button class="btn primary" id="addBtn" type="button">Add days →</button>
+          <button class="btn" id="subBtn" type="button">← Subtract days</button>
+        </div>
+        <div class="err" id="addErr"></div>
+        <div class="stat" id="addResult"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>3 · Batch mode — paste or upload text</h2>
+        <label for="batchText">One date pair per line (any common format)</label>
+        <textarea id="batchText" placeholder="Project kickoff 2026-01-05 to 2026-03-14
+Leave from 12/02/2026 until 20/02/2026
+Course: Jan 5, 2026 – Feb 27, 2026"></textarea>
+        <div class="btnrow">
+          <button class="btn primary" id="batchBtn" type="button">Calculate all</button>
+          <button class="btn" id="batchFileBtn" type="button">Upload a text file</button>
+          <input type="file" id="batchFile" accept=".txt,.csv,.md" style="display:none;">
+          <button class="btn" id="batchSampleBtn" type="button">Sample</button>
+          <button class="btn" id="batchCsvBtn" type="button">Download CSV</button>
+        </div>
+        <div class="err" id="batchErr"></div>
+        <div id="batchOut"></div>
+        <p class="note">Formats recognised: 2026-01-05 (ISO), 05/01/2026 or 05-01-2026 (day/month/year), and 5 Jan 2026 / Jan 5, 2026. When a slash date could be read two ways (e.g. 05/06/2026), it is read as <b>day/month/year</b> — the convention in Pakistan and most of the world. Each line needs two dates; lines without a pair are reported, never guessed.</p>
+      </div>
+
+      <div class="card">
+        <h2>How it counts</h2>
+        <p class="stat" style="margin-top:0;">The difference is the number of midnights between the two dates — the standard used by calendars and project tools (20 Oct → 21 Oct = 1 day). Business days count Mondays–Fridays inside the same span. The years/months/days breakdown is a true calendar breakdown (e.g. 31 Jan → 1 Mar in a leap year = 1 month, 1 day). Public holidays are country-specific and are <b>not</b> deducted.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>Days Between Dates Calculator v1.0 · Asif SaaS Studio, by Dr. Asif Ahmad · Runs entirely in your browser.</footer>
+</div>
+
+<script>
+/* PURE-CORE-START */
+var MS_DAY = 86400000;
+function isLeap(y){ return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
+function daysInMonth(y, m){ return [31, isLeap(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]; }
+function validYMD(y, m, d){
+  return Number.isInteger(y) && Number.isInteger(m) && Number.isInteger(d) &&
+         y >= 1 && y <= 9999 && m >= 1 && m <= 12 && d >= 1 && d <= daysInMonth(y, m);
+}
+function dayNumber(y, m, d){ return Math.round(Date.UTC(y, m - 1, d) / MS_DAY); }
+function ymdFromDayNumber(n){
+  var dt = new Date(n * MS_DAY);
+  return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate() };
+}
+function parseISODate(str){
+  var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(str || "").trim());
+  if (!m) return null;
+  var y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+  return validYMD(y, mo, d) ? { y:y, m:mo, d:d } : null;
+}
+function toISODate(p){
+  function pad(n, w){ var s = String(n); while (s.length < w) s = "0" + s; return s; }
+  return pad(p.y, 4) + "-" + pad(p.m, 2) + "-" + pad(p.d, 2);
+}
+function diffDays(a, b){ /* b - a in whole days; both {y,m,d} */
+  return dayNumber(b.y, b.m, b.d) - dayNumber(a.y, a.m, a.d);
+}
+function addDays(p, n){
+  return ymdFromDayNumber(dayNumber(p.y, p.m, p.d) + n);
+}
+/* Calendar breakdown from a to b (a <= b): whole years, months, then days. */
+function addMonthsClamped(p, months){
+  var total = (p.y * 12 + (p.m - 1)) + months;
+  var y = Math.floor(total / 12), m = (total % 12) + 1;
+  var d = Math.min(p.d, daysInMonth(y, m));
+  return { y:y, m:m, d:d };
+}
+function breakdownYMD(a, b){
+  var years = b.y - a.y;
+  var anchor = addMonthsClamped(a, years * 12);
+  if (diffDays(anchor, b) < 0){ years--; anchor = addMonthsClamped(a, years * 12); }
+  var months = (b.y - anchor.y) * 12 + (b.m - anchor.m);
+  var anchor2 = addMonthsClamped(anchor, months);
+  if (diffDays(anchor2, b) < 0){ months--; anchor2 = addMonthsClamped(anchor, months); }
+  var days = diffDays(anchor2, b);
+  return { years: years, months: months, days: days };
+}
+/* Business days (Mon–Fri) in [a, b) by default; includeEnd adds b itself. */
+function businessDays(a, b, includeEnd){
+  var start = dayNumber(a.y, a.m, a.d), end = dayNumber(b.y, b.m, b.d);
+  if (end < start){ var t = start; start = end; end = t; }
+  var limit = includeEnd ? end + 1 : end, count = 0;
+  for (var n = start; n < limit; n++){
+    var dow = new Date(n * MS_DAY).getUTCDay();
+    if (dow >= 1 && dow <= 5) count++;
+  }
+  return count;
+}
+function weekdayName(p){
+  return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date(dayNumber(p.y, p.m, p.d) * MS_DAY).getUTCDay()];
+}
+/* ---------------- Text extraction for batch mode ---------------- */
+var MONTHS = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, sept:9, oct:10, nov:11, dec:12 };
+var DATE_PATTERNS = [
+  { re: /\b(\d{4})-(\d{1,2})-(\d{1,2})\b/g, map: function(m){ return { y:+m[1], m:+m[2], d:+m[3] }; } },
+  { re: /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})\b/g, map: function(m){
+      var a = +m[1], b = +m[2];
+      if (a > 12) return { y:+m[3], m:b, d:a };        /* first must be the day */
+      if (b > 12) return { y:+m[3], m:a, d:b };        /* second must be the day -> first is month */
+      return { y:+m[3], m:b, d:a };                    /* ambiguous: day/month/year */
+  } },
+  { re: /\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s*,?\s*(\d{4})\b/gi, map: function(m){ return { y:+m[3], m:MONTHS[m[2].toLowerCase().slice(0, 4) === "sept" ? "sept" : m[2].toLowerCase().slice(0, 3)], d:+m[1] }; } },
+  { re: /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+(\d{1,2})\s*,?\s*(\d{4})\b/gi, map: function(m){ return { y:+m[3], m:MONTHS[m[1].toLowerCase().slice(0, 4) === "sept" ? "sept" : m[1].toLowerCase().slice(0, 3)], d:+m[2] }; } }
+];
+function findDatesInText(text){
+  var found = [];
+  DATE_PATTERNS.forEach(function(p){
+    var m; p.re.lastIndex = 0;
+    while ((m = p.re.exec(text)) !== null){
+      var pdate = p.map(m);
+      if (validYMD(pdate.y, pdate.m, pdate.d)) found.push({ date: pdate, index: m.index, raw: m[0] });
+    }
+  });
+  found.sort(function(x, y){ return x.index - y.index; });
+  /* drop overlaps (same start index from two patterns) */
+  var out = [], lastIndex = -1;
+  found.forEach(function(f){ if (f.index !== lastIndex){ out.push(f); lastIndex = f.index; } });
+  return out;
+}
+function analyzeBatch(text){
+  var lines = String(text || "").split(/\r?\n/);
+  var results = [];
+  lines.forEach(function(line, i){
+    if (!line.trim()) return;
+    var dates = findDatesInText(line);
+    if (dates.length >= 2){
+      var d1 = dates[0].date, d2 = dates[1].date;
+      results.push({ line: i + 1, label: line.trim(), start: toISODate(d1), end: toISODate(d2), days: Math.abs(diffDays(d1, d2)), ok: true });
+    } else {
+      results.push({ line: i + 1, label: line.trim(), ok: false, found: dates.length });
+    }
+  });
+  return results;
+}
+function batchToCSV(results){
+  var lines = ["line,start_date,end_date,days_between"];
+  results.forEach(function(r){
+    if (r.ok){
+      var label = /[",\n]/.test(r.label) ? '"' + r.label.replace(/"/g, '""') + '"' : r.label;
+      lines.push(r.line + "," + r.start + "," + r.end + "," + r.days);
+      void label;
+    }
+  });
+  return lines.join("\r\n");
+}
+/* PURE-CORE-END */
+</script>
+<script>
+var $ = function(id){ return document.getElementById(id); };
+function fmtDateLong(p){
+  var names = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return weekdayName(p) + ", " + p.d + " " + names[p.m - 1] + " " + p.y;
+}
+function compute(){
+  var err = $("dateErr"), box = $("resultBox");
+  var a = parseISODate($("startDate").value), b = parseISODate($("endDate").value);
+  if (!a || !b){
+    box.innerHTML = "";
+    if ($("startDate").value || $("endDate").value){
+      err.textContent = "Please choose two valid calendar dates.";
+      err.style.display = "block";
+    } else err.style.display = "none";
+    return;
+  }
+  err.style.display = "none";
+  var signed = diffDays(a, b);
+  var lo = signed >= 0 ? a : b, hi = signed >= 0 ? b : a;
+  var incl = $("inclEnd").checked;
+  var days = Math.abs(signed) + (incl ? 1 : 0);
+  var bd = businessDays(a, b, incl);
+  var br = breakdownYMD(lo, hi);
+  var weeks = Math.floor(Math.abs(signed) / 7), rem = Math.abs(signed) % 7;
+  var rows = [
+    ["Calendar breakdown", br.years + " year" + (br.years === 1 ? "" : "s") + ", " + br.months + " month" + (br.months === 1 ? "" : "s") + ", " + br.days + " day" + (br.days === 1 ? "" : "s")],
+    ["Weeks", weeks + " week" + (weeks === 1 ? "" : "s") + (rem ? " and " + rem + " day" + (rem === 1 ? "" : "s") : "")],
+    ["Business days (Mon–Fri)", bd],
+    ["Weekend days", Math.abs(signed) + (incl ? 1 : 0) - bd],
+    ["Total hours", (Math.abs(signed) * 24).toLocaleString()]
+  ];
+  box.innerHTML =
+    '<div class="bigNum">' + days.toLocaleString() + '</div>' +
+    '<div class="bigLabel">day' + (days === 1 ? "" : "s") + ' between the two dates' + (incl ? " (end date included)" : "") + "</div>" +
+    '<div class="stat">' + fmtDateLong(a) + " → " + fmtDateLong(b) + (signed < 0 ? '<br><b>Note:</b> the end date is earlier than the start date — the count is the same span measured backwards.' : "") + "</div>" +
+    '<table class="data">' + rows.map(function(r){ return "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</table>";
+}
+["startDate", "endDate"].forEach(function(id){ $(id).addEventListener("change", compute); });
+$("inclEnd").addEventListener("change", compute);
+$("todayBtn").addEventListener("click", function(){
+  var now = new Date();
+  $("endDate").value = toISODate({ y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() });
+  compute();
+});
+$("swapBtn").addEventListener("click", function(){
+  var t = $("startDate").value; $("startDate").value = $("endDate").value; $("endDate").value = t; compute();
+});
+$("clearBtn").addEventListener("click", function(){
+  $("startDate").value = ""; $("endDate").value = ""; $("inclEnd").checked = false; compute();
+});
+function addSub(sign){
+  var err = $("addErr"), out = $("addResult");
+  var base = parseISODate($("baseDate").value);
+  var n = Number($("dayCount").value);
+  if (!base){ err.textContent = "Choose a starting date first."; err.style.display = "block"; out.innerHTML = ""; return; }
+  if (!Number.isFinite(n) || Math.floor(n) !== n){ err.textContent = "Enter a whole number of days."; err.style.display = "block"; out.innerHTML = ""; return; }
+  err.style.display = "none";
+  var res = addDays(base, sign * n);
+  out.innerHTML = "<b>" + fmtDateLong(base) + "</b> " + (sign > 0 ? "+" : "−") + " " + Math.abs(n) + " day" + (Math.abs(n) === 1 ? "" : "s") + " = <b>" + fmtDateLong(res) + "</b> (" + toISODate(res) + ")";
+}
+$("addBtn").addEventListener("click", function(){ addSub(1); });
+$("subBtn").addEventListener("click", function(){ addSub(-1); });
+
+var lastBatch = [];
+function runBatch(){
+  var err = $("batchErr"), out = $("batchOut");
+  var text = $("batchText").value;
+  if (!text.trim()){ err.textContent = "Paste some text with date pairs first, or load the sample."; err.style.display = "block"; out.innerHTML = ""; return; }
+  err.style.display = "none";
+  lastBatch = analyzeBatch(text);
+  var okCount = lastBatch.filter(function(r){ return r.ok; }).length;
+  var html = '<table class="batch"><thead><tr><th>Line</th><th>Start</th><th>End</th><th style="text-align:right;">Days</th></tr></thead><tbody>';
+  lastBatch.forEach(function(r){
+    if (r.ok) html += "<tr><td>" + r.line + "</td><td>" + r.start + "</td><td>" + r.end + '</td><td class="n">' + r.days + "</td></tr>";
+    else html += "<tr><td>" + r.line + '</td><td colspan="3" style="color:var(--error);">No date pair found (' + r.found + " date" + (r.found === 1 ? "" : "s") + " recognised) — line skipped</td></tr>";
+  });
+  html += "</tbody></table>";
+  html += '<div class="stat"><b>' + okCount + "</b> of " + lastBatch.length + " lines calculated.</div>";
+  out.innerHTML = html;
+}
+$("batchBtn").addEventListener("click", runBatch);
+$("batchSampleBtn").addEventListener("click", function(){
+  $("batchText").value = "Project kickoff 2026-01-05 to 2026-03-14\nLeave from 12/02/2026 until 20/02/2026\nCourse: Jan 5, 2026 – Feb 27, 2026\nVisa issued (no return date yet)";
+  runBatch();
+});
+$("batchFileBtn").addEventListener("click", function(){ $("batchFile").click(); });
+$("batchFile").addEventListener("change", async function(){
+  var f = $("batchFile").files[0];
+  if (!f) return;
+  $("batchText").value = await f.text();
+  runBatch();
+  $("batchFile").value = "";
+});
+$("batchCsvBtn").addEventListener("click", function(){
+  if (!lastBatch.length) runBatch();
+  var blob = new Blob([batchToCSV(lastBatch)], { type: "text/csv" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "date-differences.csv";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 400);
+});
+/* init: start = today, end = today + 30 */
+(function(){
+  var now = new Date();
+  var t = { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() };
+  $("startDate").value = toISODate(t);
+  $("endDate").value = toISODate(addDays(t, 30));
+  $("baseDate").value = toISODate(t);
+  compute();
+})();
+</script>
+</body>
+</html>
